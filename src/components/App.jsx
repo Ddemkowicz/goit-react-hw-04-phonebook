@@ -15,8 +15,10 @@ const App = () => {
     { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
   ]);
   const [filter, setFilter] = useState('');
-  const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
+  const [values, setValues] = useState({
+    name: '',
+    number: '',
+  });
   const [filteredContacts, setFilteredContacts] = useState([]);
 
   useEffect(() => {
@@ -33,31 +35,29 @@ const App = () => {
     setFilteredContacts(newContacts);
   }, [contacts, filter]);
 
-  const handleNameChange = e => {
-    setName(e.target.value);
-  };
-
-  const handleNumberChange = e => {
-    setNumber(e.target.value);
+  const handleChange = e => {
+    setValues({ ...values, [e.target.name]: e.target.value });
   };
 
   const handleFormSubmit = e => {
     e.preventDefault();
 
     const existingContact = contacts.find(
-      contact => contact.name.toLowerCase() === name.toLowerCase()
+      contact => contact.name.toLowerCase() === values.name.toLowerCase()
     );
     if (existingContact) {
-      alert(`"${name}" in already in contacts.`);
+      alert(`"${values.name}" in already in contacts.`);
     } else {
       const newContact = {
         id: nanoid(),
-        name,
-        number,
+        name: values.name,
+        number: values.number,
       };
       setContacts([...contacts, newContact]);
-      setName('');
-      setNumber('');
+      setValues({
+        name: '',
+        number: '',
+      });
     }
   };
 
@@ -88,10 +88,9 @@ const App = () => {
       }}
     >
       <ContactForm
-        name={name}
-        number={number}
-        handleNameChange={handleNameChange}
-        handleNumberChange={handleNumberChange}
+        name={values.name}
+        number={values.number}
+        handleChange={handleChange}
         handleFormSubmit={handleFormSubmit}
       />
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
@@ -100,13 +99,21 @@ const App = () => {
   );
 };
 App.propTypes = {
-  initialContacts: PropTypes.arrayOf(
+  contacts: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       number: PropTypes.string.isRequired,
     })
   ),
+  values: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      number: PropTypes.string.isRequired,
+    })
+  ),
+  filter: PropTypes.string,
+  filteredContacts: PropTypes.array,
 };
 
 export default App;
